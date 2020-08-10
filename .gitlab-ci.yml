@@ -1,0 +1,26 @@
+---
+image: garyellis/pipelines-runner:0.1.0
+
+before_script:
+  - tfenv list
+  - terraform version
+  - ansible-playbook --version
+  - env
+  - make dependencies
+
+plan:
+  tags:
+    - docker
+  stage: .pre
+  script:
+    - make terragrunt-plan
+
+apply:
+  tags:
+     - docker
+  stage: deploy
+  script:
+    - make ${target}
+  when: manual
+  variables:
+    target: terragrunt-apply
